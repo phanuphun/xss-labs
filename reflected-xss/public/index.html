@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Web Page</title>
+</head>
+
+<body>
+    <h1>Welcome to My Web Page</h1>
+    <!-- Run "?q=<img src="x" onerror="alert('XSS')">"  -->
+    <form method="get" id="search-form">
+        <input type="text" name="q" id="search-input" placeholder="Type something…" />
+        <button type="submit">Search</button>
+    </form>
+
+    <hr>
+
+    <h2>Results:</h2>
+    <div id="result">
+
+        <script>
+            document.addEventListener("DOMContentLoaded", () => {
+                const form = document.getElementById("search-form");
+                const input = document.getElementById("search-input");
+                const result = document.getElementById("result");
+
+                form.addEventListener("submit", async (e) => {
+                    e.preventDefault();
+                    const q = input.value.trim();
+                    if (!q) return;
+
+                    const resp = await fetch(`http://localhost:3000/search?q=${encodeURIComponent(q)}`);
+                    const data = await resp.json();
+
+                    result.innerHTML = data.query;
+                });
+            });
+        </script>
+</body>
+
+</html>
